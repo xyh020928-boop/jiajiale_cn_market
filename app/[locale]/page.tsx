@@ -1,8 +1,11 @@
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/routing";
 import { createClient } from "@/lib/supabase/server";
-import { Calendar } from "lucide-react";
+import { Search } from "lucide-react";
 import type { NewsRow } from "@/lib/supabase/types";
+import { LocaleSwitcher } from "@/components/locale-switcher";
+import { Banner } from "@/components/home/banner";
+import { CategoryGrid } from "@/components/home/category-grid";
 
 type Props = {
   params: { locale: string };
@@ -12,127 +15,138 @@ export default async function HomePage({ params }: Props) {
   const { locale } = params;
   const t = await getTranslations({ locale, namespace: "home" });
 
-  // 获取最新 3 条到货通知
   const supabase = createClient();
   const { data: latestNews } = await supabase
     .from("news")
     .select("*")
     .eq("published", true)
     .order("created_at", { ascending: false })
-    .limit(3);
+    .limit(4);
 
   const items = (latestNews ?? []) as NewsRow[];
 
   return (
-    <div className="space-y-8 px-4 py-8">
-      {/* Hero 区域 */}
-      <section className="space-y-4 text-center">
-        <h1 className="text-3xl font-bold tracking-tight text-foreground">
-          {t("title")}
-        </h1>
-        <p className="text-lg text-muted-foreground">{t("subtitle")}</p>
-        <p className="text-sm leading-relaxed text-muted-foreground">
-          {t("description")}
-        </p>
-        <Link
-          href="/news"
-          className="inline-block rounded-lg bg-primary px-8 py-3 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary-dark"
-        >
-          {t("cta")}
-        </Link>
-      </section>
-
-      {/* 特色介绍 */}
-      <section className="space-y-4">
-        <h2 className="text-center text-xl font-semibold">
-          {t("features.title")}
-        </h2>
-        <div className="grid gap-4">
-          <FeatureCard
-            title={t("features.fresh.title")}
-            desc={t("features.fresh.desc")}
-          />
-          <FeatureCard
-            title={t("features.authentic.title")}
-            desc={t("features.authentic.desc")}
-          />
-          <FeatureCard
-            title={t("features.convenient.title")}
-            desc={t("features.convenient.desc")}
-          />
+    <div className="space-y-4 px-4 pb-6">
+      {/* ===== 顶部栏 ===== */}
+      <div className="flex items-center justify-between pt-3">
+        <h1 className="text-lg font-bold text-primary">{t("title")}</h1>
+        <div className="flex items-center gap-3">
+          <LocaleSwitcher />
+          <Link href="/news">
+            <Search className="h-5 w-5 text-gray-500" />
+          </Link>
         </div>
+      </div>
+
+      {/* ===== 搜索框 ===== */}
+      <Link
+        href="/news"
+        className="flex items-center gap-2 rounded-xl bg-gray-100 px-4 py-2.5 text-sm text-gray-400 transition-colors active:bg-gray-200"
+      >
+        <Search className="h-4 w-4" />
+        <span>{t("searchPlaceholder")}</span>
+      </Link>
+
+      {/* ===== Banner 轮播 ===== */}
+      <Banner />
+
+      {/* ===== 分类宫格 ===== */}
+      <section>
+        <h2 className="mb-3 text-base font-semibold text-gray-800">
+          {t("categories.title")}
+        </h2>
+        <CategoryGrid />
       </section>
 
-      {/* 最新到货通知 */}
-      {items.length > 0 && (
-        <section className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-xl font-semibold">
-              {t("latestNews.title")}
-            </h2>
-            <Link
-              href="/news"
-              className="text-sm font-medium text-primary hover:underline"
-            >
-              {t("latestNews.viewAll")}
-            </Link>
-          </div>
-          <div className="space-y-3">
+      {/* ===== 新品到货 ===== */}
+      <section>
+        <div className="mb-3 flex items-center justify-between">
+          <h2 className="text-base font-semibold text-gray-800">
+            {t("latestNews.title")}
+          </h2>
+          <Link
+            href="/news"
+            className="text-xs font-medium text-primary"
+          >
+            {t("latestNews.viewAll")}
+          </Link>
+        </div>
+
+        {items.length === 0 ? (
+          <p className="py-10 text-center text-sm text-gray-400">
+            {t("latestNews.empty")}
+          </p>
+        ) : (
+          <div className="grid grid-cols-2 gap-3">
             {items.map((item) => (
               <Link key={item.id} href={`/news/${item.id}`}>
-                <div className="rounded-xl bg-white p-4 shadow-sm transition-shadow hover:shadow-md">
-                  <h3 className="mb-1 text-sm font-semibold text-foreground">
-                    {locale === "zh" ? item.title_zh : item.title_ko}
-                  </h3>
-                  <p className="mb-2 line-clamp-1 text-xs text-muted-foreground">
-                    {locale === "zh" ? item.content_zh : item.content_ko}
-                  </p>
-                  <div className="flex items-center gap-1 text-xs text-muted-foreground/60">
-                    <Calendar className="h-3 w-3" />
-                    <time>
-                      {new Date(item.created_at).toLocaleDateString(
-                        locale === "zh" ? "zh-CN" : "ko-KR",
-                        { month: "short", day: "numeric" }
-                      )}
-                    </time>
+                <article className="overflow-hidden rounded-xl bg-white shadow-[0_2px_8px_rgba(0,0,0,0.08)] transition-shadow hover:shadow-[0_2px_12px_rgba(0,0,0,0.12)]">
+                  {/* 图片占位区 */}
+                  <div className="flex h-[120px] items-center justify-center bg-gray-100 text-xs text-gray-300">
+                    {item.images && item.images.length > 0 ? (
+                      /* eslint-disable-next-line @next/next/no-img-element */
+                      <img
+                        src={item.images[0]}
+                        alt=""
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <span>{t("latestNews.noImage")}</span>
+                    )}
                   </div>
-                </div>
+                  {/* 文字信息 */}
+                  <div className="space-y-1 p-2.5">
+                    <h3 className="line-clamp-1 text-sm font-medium text-gray-800">
+                      {locale === "zh" ? item.title_zh : item.title_ko}
+                    </h3>
+                    <p className="line-clamp-1 text-[11px] text-gray-400">
+                      {locale === "zh" ? item.content_zh : item.content_ko}
+                    </p>
+                    <div className="flex items-center justify-between">
+                      <time className="text-[10px] text-gray-300">
+                        {new Date(item.created_at).toLocaleDateString(
+                          locale === "zh" ? "zh-CN" : "ko-KR",
+                          { month: "2-digit", day: "2-digit" }
+                        )}
+                      </time>
+                      {/* 可选价格占位 */}
+                      <span className="text-xs font-bold text-primary">
+                        --</span>
+                    </div>
+                  </div>
+                </article>
               </Link>
             ))}
           </div>
-        </section>
-      )}
+        )}
+      </section>
 
-      {/* 门店信息 */}
-      <section className="rounded-xl bg-white p-6 shadow-sm">
-        <h2 className="mb-4 text-xl font-semibold">
+      {/* ===== 门店信息 ===== */}
+      <section className="rounded-xl bg-white p-4 shadow-[0_2px_8px_rgba(0,0,0,0.08)]">
+        <h2 className="mb-3 text-base font-semibold text-gray-800">
           {t("storeInfo.title")}
         </h2>
-        <div className="space-y-3 text-sm text-muted-foreground">
-          <p>{t("storeInfo.address")}</p>
-          <p>{t("storeInfo.hours")}</p>
-          <p>{t("storeInfo.phone")}</p>
-        </div>
-        {/* 地图占位 */}
-        <div className="mt-4 flex h-40 items-center justify-center rounded-lg bg-gray-100 text-xs text-muted-foreground">
-          🗺️ 地图将在后续接入
+        <div className="space-y-2.5 text-sm">
+          <div className="flex items-start gap-2">
+            <span className="mt-0.5 shrink-0">📍</span>
+            <span className="text-gray-600">{t("storeInfo.address")}</span>
+          </div>
+          <div className="flex items-start gap-2">
+            <span className="mt-0.5 shrink-0">🕐</span>
+            <span className="text-gray-600">{t("storeInfo.hours")}</span>
+          </div>
+          <a
+            href="tel:0212345678"
+            className="flex items-start gap-2"
+          >
+            <span className="mt-0.5 shrink-0">📞</span>
+            <span className="text-primary">{t("storeInfo.phone")}</span>
+          </a>
         </div>
       </section>
-    </div>
-  );
-}
 
-function FeatureCard({
-  title,
-  desc,
-}: {
-  title: string;
-  desc: string;
-}) {
-  return (
-    <div className="rounded-xl bg-white p-5 shadow-sm transition-shadow hover:shadow-md">
-      <h3 className="mb-1 font-semibold text-foreground">{title}</h3>
-      <p className="text-sm text-muted-foreground">{desc}</p>
+      {/* 底部间距 */}
+      <div className="h-4" />
     </div>
   );
 }

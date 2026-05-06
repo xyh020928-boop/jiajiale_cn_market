@@ -2,8 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { Link } from "@/i18n/routing";
-import { Button } from "@/components/ui/button";
-import { Calendar, ArrowLeft } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 import type { NewsRow } from "@/lib/supabase/types";
 
 type Props = {
@@ -32,19 +31,21 @@ export default async function NewsDetailPage({ params }: Props) {
   const images = newsItem.images ?? [];
 
   return (
-    <div className="space-y-6 px-4 py-8">
-      {/* 返回按钮 */}
-      <Link href="/news">
-        <Button variant="ghost" size="sm" className="gap-1.5">
-          <ArrowLeft className="h-4 w-4" />
-          {t("backToList")}
-        </Button>
-      </Link>
+    <div className="space-y-5 px-4 pb-6">
+      {/* 顶部栏 */}
+      <div className="flex items-center gap-3 pt-3">
+        <Link
+          href="/news"
+          className="flex items-center gap-1 text-sm text-gray-600"
+        >
+          <ChevronLeft className="h-5 w-5" />
+          <span>{t("backToDetail")}</span>
+        </Link>
+      </div>
 
-      <article className="space-y-6">
-        {/* 发布日期 */}
-        <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-          <Calendar className="h-4 w-4" />
+      <article className="space-y-4">
+        {/* 日期 */}
+        <div className="flex items-center gap-1.5 text-xs text-gray-400">
           <time>
             {new Date(newsItem.created_at).toLocaleDateString(
               locale === "zh" ? "zh-CN" : "ko-KR",
@@ -58,7 +59,7 @@ export default async function NewsDetailPage({ params }: Props) {
         </div>
 
         {/* 标题 */}
-        <h1 className="text-2xl font-bold leading-tight text-foreground">
+        <h1 className="text-xl font-bold leading-tight text-gray-800">
           {title}
         </h1>
 
@@ -91,24 +92,29 @@ export default async function NewsDetailPage({ params }: Props) {
           </div>
         )}
 
-        {/* 正文内容 */}
-        <div className="whitespace-pre-wrap text-base leading-relaxed text-foreground">
+        {/* 正文 */}
+        <div className="whitespace-pre-wrap text-sm leading-relaxed text-gray-600">
           {content}
         </div>
       </article>
 
       {/* 底部操作 */}
-      <div className="flex gap-3 pt-4">
-        <Link href="/news">
-          <Button variant="outline" className="gap-1.5">
-            <ArrowLeft className="h-4 w-4" />
-            {t("backToList")}
-          </Button>
+      <div className="flex gap-3 pt-2">
+        <Link
+          href="/news"
+          className="flex-1 rounded-xl border border-gray-200 py-3 text-center text-sm font-medium text-gray-600 transition-colors active:bg-gray-50"
+        >
+          {t("backToDetail")}
         </Link>
-        <Link href="/">
-          <Button variant="ghost">{t("backToHome")}</Button>
+        <Link
+          href="/"
+          className="flex-1 rounded-xl bg-primary py-3 text-center text-sm font-medium text-white transition-colors active:bg-primary-dark"
+        >
+          {t("backToHome")}
         </Link>
       </div>
+
+      <div className="h-4" />
     </div>
   );
 }

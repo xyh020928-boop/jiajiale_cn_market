@@ -1,49 +1,52 @@
 {
   "brand": "가가락마트",
+  "tabBar": {
+    "home": "홈",
+    "news": "입고 소식",
+    "contact": "문의하기"
+  },
   "home": {
     "title": "가가락마트",
-    "subtitle": "서울 구로구 중국 슈퍼마켓 — 당신 곁의 중국 맛",
-    "description": "중국에서 온 고향의 맛, 서울에서 만나보세요. 신선한 식재료, 정통 간식, 조미료까지 다양하게 준비되어 있습니다.",
-    "cta": "최신 입고 확인",
-    "features": {
-      "title": "왜 저희를 선택해야 하나요",
-      "fresh": {
-        "title": "신선 직송",
-        "desc": "매주 중국에서 직수입, 신선한 식재료 보장"
-      },
-      "authentic": {
-        "title": "정통 중국",
-        "desc": "중국 각지의 특산품 엄선, 원조 그대로"
-      },
-      "convenient": {
-        "title": "편리한 쇼핑",
-        "desc": "서울 구로구 중심, 교통 편리"
-      }
+    "searchPlaceholder": "상품 검색",
+    "categories": {
+      "title": "상품 분류",
+      "snacks": "과자",
+      "spicy": "매운 간식",
+      "instant": "즉석식품",
+      "candy": "사탕·과자",
+      "meat": "육가공품",
+      "seasoning": "조미료·건어물",
+      "drinks": "음료",
+      "daily": "생활용품"
     },
     "latestNews": {
-      "title": "최신 입고",
-      "viewAll": "전체 보기 →"
+      "title": "신규 입고",
+      "viewAll": "전체 보기→",
+      "empty": "신규 입고 없음",
+      "noImage": "이미지 없음"
     },
     "storeInfo": {
       "title": "매장 정보",
-      "address": "📍 서울 구로구 고로동로101 (1층)",
-      "hours": "🕐 영업시간: 09:00 - 21:00 (연중무휴)",
-      "phone": "📞 02-1234-5678"
+      "address": "서울 구로구 고로동로101 (1층)",
+      "hours": "영업시간: 09:00 - 21:00 (연중무휴)",
+      "phone": "02-1234-5678"
     }
   },
   "news": {
     "title": "입고 소식",
-    "subtitle": "최신 입고 정보를 가장 먼저 알려드립니다",
     "empty": "입고 소식이 없습니다",
-    "readMore": "자세히 보기",
-    "backToList": "목록으로",
-    "backToHome": "홈으로"
+    "noImage": "이미지 없음",
+    "backToHome": "홈으로",
+    "backToDetail": "목록으로",
+    "categories": {
+      "all": "전체",
+      "snacks": "간식",
+      "seasoning": "조미료",
+      "frozen": "냉동식품",
+      "drinks": "음료"
+    }
   },
   "locale": {
     "switch": "언어 변경"
-  },
-  "nav": {
-    "home": "홈",
-    "news": "입고 소식"
   }
 }

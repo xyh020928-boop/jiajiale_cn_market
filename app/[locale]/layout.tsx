@@ -3,6 +3,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages, getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
+import { TabBar } from "@/components/tab-bar";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { PWARegister } from "@/components/pwa-register";
 import "../globals.css";
@@ -40,12 +41,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       siteName: brand("brand"),
       type: "website",
     },
-    // TODO: 替换为真实图片
-    // twitter: {
-    //   card: "summary_large_image",
-    //   title: t("title"),
-    //   description: t("description"),
-    // },
   };
 }
 
@@ -60,7 +55,6 @@ export const viewport = {
 export default async function LocaleLayout({ children, params }: Props) {
   const { locale } = params;
 
-  // 校验 locale 是否有效
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   if (!routing.locales.includes(locale as any)) {
     notFound();
@@ -70,73 +64,15 @@ export default async function LocaleLayout({ children, params }: Props) {
 
   return (
     <html lang={locale}>
-      <body className="min-h-screen bg-gray-50 antialiased">
+      <body className="min-h-screen bg-white antialiased">
         <PWARegister />
         <NextIntlClientProvider messages={messages}>
-          <div className="mx-auto flex min-h-screen max-w-2xl flex-col">
-            {/* 顶部导航 */}
-            <header className="sticky top-0 z-50 border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
-              <div className="flex items-center justify-between px-4 py-3">
-                <a
-                  href={`/${locale}`}
-                  className="text-lg font-bold text-primary"
-                >
-                  <BrandName locale={locale} />
-                </a>
-                <nav className="flex items-center gap-4 text-sm">
-                  <a
-                    href={`/${locale}`}
-                    className="text-muted-foreground transition-colors hover:text-foreground"
-                  >
-                    <LocaleNavLabel locale={locale} namespace="nav" labelKey="home" />
-                  </a>
-                  <a
-                    href={`/${locale}/news`}
-                    className="text-muted-foreground transition-colors hover:text-foreground"
-                  >
-                    <LocaleNavLabel locale={locale} namespace="nav" labelKey="news" />
-                  </a>
-                  <LocaleSwitcher />
-                </nav>
-              </div>
-            </header>
-
-            {/* 主内容 */}
-            <main className="flex-1">{children}</main>
-
-            {/* 底部 */}
-            <footer className="border-t bg-white py-6 text-center text-xs text-muted-foreground">
-              <Copyright locale={locale} />
-            </footer>
+          <div className="mx-auto min-h-screen max-w-[480px] bg-white pb-16">
+            <main>{children}</main>
           </div>
+          <TabBar />
         </NextIntlClientProvider>
       </body>
     </html>
   );
-}
-
-/** 显示店铺名称 */
-async function BrandName({ locale }: { locale: string }) {
-  const t = await getTranslations({ locale });
-  return <>{t("brand")}</>;
-}
-
-/** 版权信息 */
-async function Copyright({ locale }: { locale: string }) {
-  const t = await getTranslations({ locale });
-  return <p>© 2026 {t("brand")}. All rights reserved.</p>;
-}
-
-/** 显示导航文案 */
-async function LocaleNavLabel({
-  locale,
-  namespace,
-  labelKey,
-}: {
-  locale: string;
-  namespace: string;
-  labelKey: string;
-}) {
-  const t = await getTranslations({ locale, namespace });
-  return <>{t(labelKey)}</>;
 }

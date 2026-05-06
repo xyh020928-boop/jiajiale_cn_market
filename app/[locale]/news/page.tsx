@@ -1,27 +1,27 @@
-import { createClient } from "@/lib/supabase/server";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/routing";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Calendar } from "lucide-react";
+import { createClient } from "@/lib/supabase/server";
+import { ChevronLeft, Search } from "lucide-react";
 import type { NewsRow } from "@/lib/supabase/types";
 
 type Props = {
   params: { locale: string };
 };
 
+const categories = ["all", "snacks", "seasoning", "frozen", "drinks"] as const;
+
 export default async function NewsListPage({ params }: Props) {
   const { locale } = params;
   const t = await getTranslations({ locale, namespace: "news" });
-  const supabase = createClient();
+  const catT = await getTranslations({ locale, namespace: "news.categories" });
 
+  const supabase = createClient();
   const { data: newsList, error } = await supabase
     .from("news")
     .select("*")
     .eq("published", true)
     .order("created_at", { ascending: false });
 
-  // 出错时静默处理，显示空列表
   if (error) {
     console.error("Failed to fetch news:", error.message);
   }
@@ -29,67 +29,77 @@ export default async function NewsListPage({ params }: Props) {
   const items = (newsList ?? []) as NewsRow[];
 
   return (
-    <div className="space-y-6 px-4 py-8">
-      {/* 页面标题 */}
-      <div className="space-y-1">
-        <h1 className="text-2xl font-bold text-foreground">{t("title")}</h1>
-        <p className="text-sm text-muted-foreground">{t("subtitle")}</p>
+    <div className="space-y-4 px-4 pb-6">
+      {/* ===== 顶部栏 ===== */}
+      <div className="flex items-center justify-between pt-3">
+        <Link href="/" className="flex items-center gap-1 text-sm text-gray-600">
+          <ChevronLeft className="h-5 w-5" />
+          <span>{t("backToHome")}</span>
+        </Link>
+        <h1 className="text-base font-bold text-gray-800">{t("title")}</h1>
+        <Link href="/news">
+          <Search className="h-5 w-5 text-gray-400" />
+        </Link>
       </div>
 
-      {/* 到货通知列表 */}
-      {items.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-16 text-center">
-          <p className="text-muted-foreground">{t("empty")}</p>
+      {/* ===== 分类滑动 Tab ===== */}
+      <div className="-mx-4 overflow-x-auto scrollbar-hide">
+        <div className="flex gap-2 px-4">
+          {categories.map((cat) => (
+            <button
+              key={cat}
+              className={`shrink-0 rounded-full px-4 py-1.5 text-xs font-medium transition-colors ${
+                cat === "all"
+                  ? "bg-primary text-white"
+                  : "bg-gray-100 text-gray-600"
+              }`}
+            >
+              {catT(cat)}
+            </button>
+          ))}
         </div>
+      </div>
+
+      {/* ===== 双列商品卡片 ===== */}
+      {items.length === 0 ? (
+        <p className="py-20 text-center text-sm text-gray-400">{t("empty")}</p>
       ) : (
-        <div className="space-y-4">
+        <div className="grid grid-cols-2 gap-3">
           {items.map((item) => (
             <Link key={item.id} href={`/news/${item.id}`}>
-              <Card className="overflow-hidden transition-shadow hover:shadow-md">
-                <CardContent className="p-4">
-                  {/* 图片预览 */}
-                  {item.images && item.images.length > 0 && (
-                    <div className="mb-3 overflow-hidden rounded-lg">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={item.images[0]}
-                        alt=""
-                        className="h-40 w-full object-cover"
-                      />
-                    </div>
+              <article className="overflow-hidden rounded-xl bg-white shadow-[0_2px_8px_rgba(0,0,0,0.08)] transition-shadow hover:shadow-[0_2px_12px_rgba(0,0,0,0.12)]">
+                {/* 图片 */}
+                <div className="flex h-[140px] items-center justify-center bg-gray-100 text-xs text-gray-300">
+                  {item.images && item.images.length > 0 ? (
+                    /* eslint-disable-next-line @next/next/no-img-element */
+                    <img
+                      src={item.images[0]}
+                      alt=""
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <span>{t("noImage")}</span>
                   )}
-
-                  {/* 标题 */}
-                  <h2 className="mb-2 text-base font-semibold leading-snug text-foreground">
+                </div>
+                {/* 文字 */}
+                <div className="space-y-1 p-2.5">
+                  <h3 className="line-clamp-2 text-sm font-medium leading-snug text-gray-800">
                     {locale === "zh" ? item.title_zh : item.title_ko}
-                  </h2>
-
-                  {/* 内容预览 */}
-                  <p className="mb-3 line-clamp-2 text-sm text-muted-foreground">
+                  </h3>
+                  <p className="line-clamp-1 text-[11px] text-gray-400">
                     {locale === "zh" ? item.content_zh : item.content_ko}
                   </p>
-
-                  {/* 底部信息 */}
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                      <Calendar className="h-3.5 w-3.5" />
-                      <time>
-                        {new Date(item.created_at).toLocaleDateString(
-                          locale === "zh" ? "zh-CN" : "ko-KR",
-                          {
-                            year: "numeric",
-                            month: "long",
-                            day: "numeric",
-                          }
-                        )}
-                      </time>
-                    </div>
-                    <Badge variant="success" className="text-[11px]">
-                      {t("readMore")}
-                    </Badge>
+                    <time className="text-[10px] text-gray-300">
+                      {new Date(item.created_at).toLocaleDateString(
+                        locale === "zh" ? "zh-CN" : "ko-KR",
+                        { month: "2-digit", day: "2-digit" }
+                      )}
+                    </time>
+                    <span className="text-xs font-bold text-primary">--</span>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </article>
             </Link>
           ))}
         </div>
