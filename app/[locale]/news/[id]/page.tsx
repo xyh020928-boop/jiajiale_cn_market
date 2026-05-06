@@ -15,22 +15,21 @@ export default async function NewsDetailPage({ params }: Props) {
   const t = await getTranslations({ locale, namespace: "news" });
   const supabase = createClient();
 
-  const { data, error } = await (supabase
+  const { data, error } = await supabase
     .from("news")
     .select("*")
     .eq("id", id)
     .eq("published", true)
-    .single() as Promise<{ data: NewsRow | null; error: Error | null }>);
+    .single();
 
-  const item = data;
-
-  if (error || !item) {
+  if (error || !data) {
     notFound();
   }
 
-  const title = locale === "zh" ? item.title_zh : item.title_ko;
-  const content = locale === "zh" ? item.content_zh : item.content_ko;
-  const images = item.images ?? [];
+  const newsItem = data as NewsRow;
+  const title = locale === "zh" ? newsItem.title_zh : newsItem.title_ko;
+  const content = locale === "zh" ? newsItem.content_zh : newsItem.content_ko;
+  const images = newsItem.images ?? [];
 
   return (
     <div className="space-y-6 px-4 py-8">
@@ -47,7 +46,7 @@ export default async function NewsDetailPage({ params }: Props) {
         <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
           <Calendar className="h-4 w-4" />
           <time>
-            {new Date(item.created_at).toLocaleDateString(
+            {new Date(newsItem.created_at).toLocaleDateString(
               locale === "zh" ? "zh-CN" : "ko-KR",
               {
                 year: "numeric",

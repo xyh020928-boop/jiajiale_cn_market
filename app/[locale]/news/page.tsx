@@ -15,21 +15,18 @@ export default async function NewsListPage({ params }: Props) {
   const t = await getTranslations({ locale, namespace: "news" });
   const supabase = createClient();
 
-  const { data: newsList, error } = await (supabase
+  const { data: newsList, error } = await supabase
     .from("news")
     .select("*")
     .eq("published", true)
-    .order("created_at", { ascending: false }) as Promise<{
-    data: NewsRow[] | null;
-    error: Error | null;
-  }>);
+    .order("created_at", { ascending: false });
 
   // 出错时静默处理，显示空列表
   if (error) {
     console.error("Failed to fetch news:", error.message);
   }
 
-  const items = newsList ?? [];
+  const items = (newsList ?? []) as NewsRow[];
 
   return (
     <div className="space-y-6 px-4 py-8">

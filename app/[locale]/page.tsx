@@ -14,14 +14,14 @@ export default async function HomePage({ params }: Props) {
 
   // 获取最新 3 条到货通知
   const supabase = createClient();
-  const { data: latestNews } = await (supabase
+  const { data: latestNews } = await supabase
     .from("news")
     .select("*")
     .eq("published", true)
     .order("created_at", { ascending: false })
-    .limit(3) as Promise<{ data: NewsRow[] | null; error: Error | null }>);
+    .limit(3);
 
-  const items = latestNews ?? [];
+  const items = (latestNews ?? []) as NewsRow[];
 
   return (
     <div className="space-y-8 px-4 py-8">

@@ -21,15 +21,12 @@ export default async function AdminPage() {
   }
 
   // 获取所有到货通知
-  const { data: newsList } = await (supabase
+  const { data: newsList } = await supabase
     .from("news")
     .select("*")
-    .order("created_at", { ascending: false }) as Promise<{
-    data: NewsRow[] | null;
-    error: Error | null;
-  }>);
+    .order("created_at", { ascending: false });
 
-  const items = newsList ?? [];
+  const items = (newsList ?? []) as NewsRow[];
 
   return (
     <div className="space-y-6 px-4 py-8">

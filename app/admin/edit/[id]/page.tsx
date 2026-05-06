@@ -22,17 +22,18 @@ export default async function EditNewsPage({ params }: Props) {
   }
 
   // 获取要编辑的条目
-  const { data } = await (supabase
+  const { data: itemData, error } = await supabase
     .from("news")
     .select("*")
     .eq("id", id)
-    .single() as Promise<{ data: NewsRow | null; error: Error | null }>);
+    .single();
 
-  const item = data;
-
-  if (!item) {
+  if (error || !itemData) {
     notFound();
+    return;
   }
+
+  const item = itemData as NewsRow;
 
   return (
     <div className="space-y-6 px-4 py-8">
