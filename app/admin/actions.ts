@@ -55,7 +55,7 @@ export async function updateNews(formData: FormData) {
     throw new Error("请填写必要信息");
   }
 
-  const { error } = await supabase
+  const { error } = await (supabase as any)
     .from("news")
     .update({
       title_zh: titleZh.trim(),
@@ -63,7 +63,7 @@ export async function updateNews(formData: FormData) {
       content_zh: contentZh.trim(),
       content_ko: contentKo.trim() || contentZh.trim(),
       published: publish,
-    } as any)
+    })
     .eq("id", id);
 
   if (error) {
@@ -105,7 +105,7 @@ export async function deleteNews(id: string) {
   }
 
   // 删除数据库记录
-  const { error } = await supabase.from("news").delete().eq("id", id);
+  const { error } = await (supabase as any).from("news").delete().eq("id", id);
 
   if (error) {
     throw new Error(`删除失败: ${error.message}`);
