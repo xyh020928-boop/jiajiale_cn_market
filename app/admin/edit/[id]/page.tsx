@@ -22,13 +22,13 @@ export default async function EditNewsPage({ params }: Props) {
   }
 
   // 获取要编辑的条目
-  const { data } = await supabase
+  const { data } = await (supabase
     .from("news")
     .select("*")
     .eq("id", id)
-    .single();
+    .single() as Promise<{ data: NewsRow | null; error: Error | null }>);
 
-  const item = data as NewsRow | null;
+  const item = data;
 
   if (!item) {
     notFound();

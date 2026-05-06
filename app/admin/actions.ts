@@ -85,13 +85,13 @@ export async function deleteNews(id: string) {
   }
 
   // 先删除关联的存储图片
-  const { data } = await supabase
+  const { data } = await (supabase
     .from("news")
     .select("images")
     .eq("id", id)
-    .single();
+    .single() as Promise<{ data: Pick<NewsRow, "images"> | null; error: Error | null }>);
 
-  const item = data as Pick<NewsRow, "images"> | null;
+  const item = data;
 
   if (item?.images?.length) {
     const paths = item.images.map((url: string) => {

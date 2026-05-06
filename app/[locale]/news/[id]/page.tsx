@@ -15,14 +15,14 @@ export default async function NewsDetailPage({ params }: Props) {
   const t = await getTranslations({ locale, namespace: "news" });
   const supabase = createClient();
 
-  const { data, error } = await supabase
+  const { data, error } = await (supabase
     .from("news")
     .select("*")
     .eq("id", id)
     .eq("published", true)
-    .single();
+    .single() as Promise<{ data: NewsRow | null; error: Error | null }>);
 
-  const item = data as unknown as NewsRow | null;
+  const item = data;
 
   if (error || !item) {
     notFound();
