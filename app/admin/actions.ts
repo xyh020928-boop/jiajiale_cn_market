@@ -3,6 +3,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import type { NewsRow } from "@/lib/supabase/types";
 
 export async function togglePublish(id: string, current: boolean) {
   const supabase = createClient();
@@ -84,11 +85,13 @@ export async function deleteNews(id: string) {
   }
 
   // 先删除关联的存储图片
-  const { data: item } = await supabase
+  const { data } = await supabase
     .from("news")
     .select("images")
     .eq("id", id)
     .single();
+
+  const item = data as Pick<NewsRow, "images"> | null;
 
   if (item?.images?.length) {
     const paths = item.images.map((url: string) => {

@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Plus, LogOut, Pencil } from "lucide-react";
 import { togglePublish, logout } from "./actions";
 import { DeleteButton } from "@/components/admin/delete-button";
+import type { NewsRow } from "@/lib/supabase/types";
 import Link from "next/link";
 
 export default async function AdminPage() {
@@ -25,7 +26,7 @@ export default async function AdminPage() {
     .select("*")
     .order("created_at", { ascending: false });
 
-  const items = newsList ?? [];
+  const items = (newsList ?? []) as NewsRow[];
 
   return (
     <div className="space-y-6 px-4 py-8">

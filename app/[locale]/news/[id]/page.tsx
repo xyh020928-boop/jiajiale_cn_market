@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { Link } from "@/i18n/routing";
 import { Button } from "@/components/ui/button";
 import { Calendar, ArrowLeft } from "lucide-react";
+import type { NewsRow } from "@/lib/supabase/types";
 
 type Props = {
   params: { locale: string; id: string };
@@ -14,12 +15,14 @@ export default async function NewsDetailPage({ params }: Props) {
   const t = await getTranslations({ locale, namespace: "news" });
   const supabase = createClient();
 
-  const { data: item, error } = await supabase
+  const { data, error } = await supabase
     .from("news")
     .select("*")
     .eq("id", id)
     .eq("published", true)
     .single();
+
+  const item = data as NewsRow | null;
 
   if (error || !item) {
     notFound();

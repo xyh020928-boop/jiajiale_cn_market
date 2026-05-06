@@ -4,6 +4,7 @@ import { Link } from "@/i18n/routing";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Calendar } from "lucide-react";
+import type { NewsRow } from "@/lib/supabase/types";
 
 type Props = {
   params: { locale: string };
@@ -25,7 +26,7 @@ export default async function NewsListPage({ params }: Props) {
     console.error("Failed to fetch news:", error.message);
   }
 
-  const items = newsList ?? [];
+  const items = (newsList ?? []) as NewsRow[];
 
   return (
     <div className="space-y-6 px-4 py-8">

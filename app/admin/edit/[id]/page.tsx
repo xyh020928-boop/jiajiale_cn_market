@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect, notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { updateNews } from "../../actions";
+import type { NewsRow } from "@/lib/supabase/types";
 import Link from "next/link";
 
 type Props = {
@@ -21,11 +22,13 @@ export default async function EditNewsPage({ params }: Props) {
   }
 
   // 获取要编辑的条目
-  const { data: item } = await supabase
+  const { data } = await supabase
     .from("news")
     .select("*")
     .eq("id", id)
     .single();
+
+  const item = data as NewsRow | null;
 
   if (!item) {
     notFound();

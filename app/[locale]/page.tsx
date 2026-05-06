@@ -2,6 +2,7 @@ import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/routing";
 import { createClient } from "@/lib/supabase/server";
 import { Calendar } from "lucide-react";
+import type { NewsRow } from "@/lib/supabase/types";
 
 type Props = {
   params: { locale: string };
@@ -19,6 +20,8 @@ export default async function HomePage({ params }: Props) {
     .eq("published", true)
     .order("created_at", { ascending: false })
     .limit(3);
+
+  const items = (latestNews ?? []) as NewsRow[];
 
   return (
     <div className="space-y-8 px-4 py-8">
@@ -61,7 +64,7 @@ export default async function HomePage({ params }: Props) {
       </section>
 
       {/* 最新到货通知 */}
-      {latestNews && latestNews.length > 0 && (
+      {items.length > 0 && (
         <section className="space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-semibold">
@@ -75,7 +78,7 @@ export default async function HomePage({ params }: Props) {
             </Link>
           </div>
           <div className="space-y-3">
-            {latestNews.map((item) => (
+            {items.map((item) => (
               <Link key={item.id} href={`/news/${item.id}`}>
                 <div className="rounded-xl bg-white p-4 shadow-sm transition-shadow hover:shadow-md">
                   <h3 className="mb-1 text-sm font-semibold text-foreground">
