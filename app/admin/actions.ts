@@ -15,10 +15,10 @@ export async function togglePublish(id: string, current: boolean) {
     throw new Error("未登录");
   }
 
-  const { error } = await supabase
-    .from("news")
-    .update({ published: !current } as any)
-    .eq("id", id);
+ const { error } = await (supabase as any)
+  .from("news")
+  .update({ published: !current })
+  .eq("id", id);
 
   if (error) {
     throw new Error(`更新失败: ${error.message}`);
