@@ -17,7 +17,7 @@ export async function togglePublish(id: string, current: boolean) {
 
   const { error } = await supabase
     .from("news")
-    .update({ published: !current })
+    .update({ published: !current } as any)
     .eq("id", id);
 
   if (error) {
@@ -63,7 +63,7 @@ export async function updateNews(formData: FormData) {
       content_zh: contentZh.trim(),
       content_ko: contentKo.trim() || contentZh.trim(),
       published: publish,
-    })
+    } as any)
     .eq("id", id);
 
   if (error) {
