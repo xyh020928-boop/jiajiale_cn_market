@@ -22,7 +22,7 @@ export default async function NewsDetailPage({ params }: Props) {
     .eq("published", true)
     .single();
 
-  const item = data as NewsRow | null;
+  const item = data as unknown as NewsRow | null;
 
   if (error || !item) {
     notFound();
