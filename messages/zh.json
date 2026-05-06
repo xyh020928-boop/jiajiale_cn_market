@@ -1,0 +1,49 @@
+{
+  "brand": "家家乐超市",
+  "home": {
+    "title": "家家乐超市",
+    "subtitle": "서울 구로구 중국 슈퍼마켓 — 您身边的中国味道",
+    "description": "来自中国的家乡味，在首尔就能找到。新鲜食材、地道零食、调味料，应有尽有。",
+    "cta": "查看最新到货",
+    "features": {
+      "title": "为什么选择我们",
+      "fresh": {
+        "title": "新鲜直达",
+        "desc": "每周从中国直接进口，保证食材新鲜"
+      },
+      "authentic": {
+        "title": "地道正宗",
+        "desc": "精选中国各地特色商品，原汁原味"
+      },
+      "convenient": {
+        "title": "便捷购物",
+        "desc": "首尔九老区便捷位置，交通方便"
+      }
+    },
+    "latestNews": {
+      "title": "最新到货",
+      "viewAll": "查看全部 →"
+    },
+    "storeInfo": {
+      "title": "门店信息",
+      "address": "📍 서울 구로구 고로동로101 (1층)",
+      "hours": "🕐 营业时间：09:00 - 21:00（全年无休）",
+      "phone": "📞 02-1234-5678"
+    }
+  },
+  "news": {
+    "title": "到货通知",
+    "subtitle": "最新到货信息，第一时间告诉你",
+    "empty": "暂无到货通知",
+    "readMore": "查看详情",
+    "backToList": "返回列表",
+    "backToHome": "返回首页"
+  },
+  "locale": {
+    "switch": "切换语言"
+  },
+  "nav": {
+    "home": "首页",
+    "news": "到货通知"
+  }
+}

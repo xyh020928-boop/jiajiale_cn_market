@@ -1,0 +1,5 @@
+# 家家乐超市 - robots.txt
+User-agent: *
+Allow: /
+
+Sitemap: https://mama-mart.vercel.app/sitemap.xml

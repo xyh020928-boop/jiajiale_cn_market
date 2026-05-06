@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>离线 - 家家乐超市</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: #f9fafb;
+      color: #333;
+      padding: 2rem;
+      text-align: center;
+    }
+    .icon {
+      font-size: 4rem;
+      margin-bottom: 1.5rem;
+    }
+    h1 {
+      font-size: 1.5rem;
+      margin-bottom: 0.75rem;
+    }
+    p {
+      color: #666;
+      max-width: 300px;
+      line-height: 1.6;
+    }
+    .btn {
+      margin-top: 2rem;
+      padding: 0.75rem 2rem;
+      background: #C8102E;
+      color: white;
+      text-decoration: none;
+      border-radius: 0.75rem;
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+  <div class="icon">📡</div>
+  <h1>网络已断开</h1>
+  <p>请检查网络连接后重试，到货通知信息将在恢复网络后自动更新</p>
+  <a class="btn" href="javascript:location.reload()">重试</a>
+</body>
+</html>
