@@ -17,7 +17,7 @@ export default async function NewsDetailPage({ params }: Props) {
 
   const { data, error } = await supabase
     .from("news")
-    .select("*")
+    .select("id,created_at,updated_at,title_zh,title_ko,content_zh,content_ko,images,published")
     .eq("id", id)
     .eq("published", true)
     .single();

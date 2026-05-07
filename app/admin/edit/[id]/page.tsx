@@ -24,7 +24,7 @@ export default async function EditNewsPage({ params }: Props) {
   // 获取要编辑的条目
   const { data: itemData, error } = await supabase
     .from("news")
-    .select("*")
+    .select("id,created_at,updated_at,title_zh,title_ko,content_zh,content_ko,images,published,created_by")
     .eq("id", id)
     .single();
 

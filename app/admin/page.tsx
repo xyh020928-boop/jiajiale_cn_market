@@ -21,12 +21,17 @@ export default async function AdminPage() {
   }
 
   // 获取所有到货通知
-  const { data: newsList } = await supabase
-    .from("news")
-    .select("*")
-    .order("created_at", { ascending: false });
-
-  const items = (newsList ?? []) as NewsRow[];
+  let items: NewsRow[] = [];
+  try {
+    const { data: newsList } = await supabase
+      .from("news")
+      .select("*")
+      .order("created_at", { ascending: false });
+    items = (newsList ?? []) as NewsRow[];
+  } catch (e) {
+    console.error("获取到货通知失败:", e);
+    // 查询失败时 items 保持空数组，页面正常渲染
+  }
 
   return (
     <div className="space-y-6 px-4 py-8">
