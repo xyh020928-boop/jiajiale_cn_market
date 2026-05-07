@@ -50,6 +50,8 @@ export async function updateNews(formData: FormData) {
   const contentZh = formData.get("content_zh") as string;
   const contentKo = formData.get("content_ko") as string;
   const publish = formData.get("publish") === "on";
+  const priceRaw = formData.get("price_krw") as string;
+  const priceKrw = priceRaw ? parseInt(priceRaw, 10) : null;
 
   if (!id || !titleZh || !contentZh) {
     throw new Error("请填写必要信息");
@@ -62,6 +64,7 @@ export async function updateNews(formData: FormData) {
       title_ko: titleKo.trim() || titleZh.trim(),
       content_zh: contentZh.trim(),
       content_ko: contentKo.trim() || contentZh.trim(),
+      price_krw: priceKrw,
       published: publish,
     })
     .eq("id", id);

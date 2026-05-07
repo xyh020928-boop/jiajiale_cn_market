@@ -3,6 +3,7 @@ import { Link } from "@/i18n/routing";
 import { createClient } from "@/lib/supabase/server";
 import { ChevronLeft, Search } from "lucide-react";
 import type { NewsRow } from "@/lib/supabase/types";
+import { formatPrice } from "@/lib/price";
 
 type Props = {
   params: { locale: string };
@@ -96,7 +97,12 @@ export default async function NewsListPage({ params }: Props) {
                         { month: "2-digit", day: "2-digit" }
                       )}
                     </time>
-                    <span className="text-xs font-bold text-primary">--</span>
+                    {(() => {
+                      const p = formatPrice(item.price_krw);
+                      return p ? (
+                        <span className="text-xs font-bold text-primary">{p.krw} / {p.cny}</span>
+                      ) : null;
+                    })()}
                   </div>
                 </div>
               </article>

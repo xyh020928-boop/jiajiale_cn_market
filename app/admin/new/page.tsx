@@ -11,6 +11,7 @@ export default function NewNewsPage() {
   const [titleKo, setTitleKo] = useState("");
   const [contentZh, setContentZh] = useState("");
   const [contentKo, setContentKo] = useState("");
+  const [priceKrw, setPriceKrw] = useState<string>("");
   const [files, setFiles] = useState<File[]>([]);
   const [previews, setPreviews] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
@@ -177,12 +178,14 @@ export default function NewNewsPage() {
       }
 
       // 直接发布（published = true）
+      const krw = priceKrw ? parseInt(priceKrw, 10) : null;
       const { error: insertError } = await supabase.from("news").insert({
         title_zh: titleZh.trim(),
         title_ko: titleKo.trim() || titleZh.trim(),
         content_zh: contentZh.trim(),
         content_ko: contentKo.trim() || contentZh.trim(),
         images: imageUrls,
+        price_krw: krw,
         published: true,
         created_by: session.user.id,
       });
@@ -319,10 +322,40 @@ export default function NewNewsPage() {
           </div>
         </div>
 
+        {/* 价格 */}
+        <div className="rounded-xl border bg-white p-5 shadow-sm">
+          <h2 className="mb-4 text-base font-semibold text-foreground">
+            ③ 价格（选填）
+          </h2>
+          <div>
+            <label className="mb-1.5 block text-sm font-medium text-foreground">
+              韩元价格 ₩
+            </label>
+            <div className="relative">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-base text-gray-400">
+                ₩
+              </span>
+              <input
+                type="number"
+                min="0"
+                value={priceKrw}
+                onChange={(e) => setPriceKrw(e.target.value)}
+                placeholder="12000"
+                className="h-12 w-full rounded-xl border border-input bg-background pl-9 pr-4 text-base outline-none transition-colors focus:border-primary focus:ring-1 focus:ring-primary"
+              />
+            </div>
+            {priceKrw && (
+              <p className="mt-1.5 text-xs text-muted-foreground">
+                约 ¥{Math.round(Number(priceKrw) * 0.0052)}
+              </p>
+            )}
+          </div>
+        </div>
+
         {/* 图片上传 */}
         <div className="rounded-xl border bg-white p-5 shadow-sm">
           <h2 className="mb-4 text-base font-semibold text-foreground">
-            ③ 商品图片
+            ④ 商品图片
           </h2>
 
           {previews.length > 0 && (

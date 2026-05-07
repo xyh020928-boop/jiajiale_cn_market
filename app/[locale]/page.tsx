@@ -3,6 +3,7 @@ import { Link } from "@/i18n/routing";
 import { createClient } from "@/lib/supabase/server";
 import { Search } from "lucide-react";
 import type { NewsRow } from "@/lib/supabase/types";
+import { formatPrice } from "@/lib/price";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { Banner } from "@/components/home/banner";
 import { CategoryGrid } from "@/components/home/category-grid";
@@ -109,9 +110,14 @@ export default async function HomePage({ params }: Props) {
                           { month: "2-digit", day: "2-digit" }
                         )}
                       </time>
-                      {/* 可选价格占位 */}
-                      <span className="text-xs font-bold text-primary">
-                        --</span>
+                      {(() => {
+                        const p = formatPrice(item.price_krw);
+                        return p ? (
+                          <span className="text-xs font-bold text-primary">
+                            {p.krw} / {p.cny}
+                          </span>
+                        ) : null;
+                      })()}
                     </div>
                   </div>
                 </article>

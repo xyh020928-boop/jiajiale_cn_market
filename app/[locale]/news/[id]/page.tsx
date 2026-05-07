@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { Link } from "@/i18n/routing";
 import { ChevronLeft } from "lucide-react";
 import type { NewsRow } from "@/lib/supabase/types";
+import { formatPrice } from "@/lib/price";
 
 type Props = {
   params: { locale: string; id: string };
@@ -62,6 +63,18 @@ export default async function NewsDetailPage({ params }: Props) {
         <h1 className="text-xl font-bold leading-tight text-gray-800">
           {title}
         </h1>
+
+        {/* 价格 */}
+        {(() => {
+          const p = formatPrice(newsItem.price_krw);
+          return p ? (
+            <div className="flex items-baseline gap-2">
+              <span className="text-2xl font-bold text-primary">{p.krw}</span>
+              <span className="text-sm text-gray-400">/</span>
+              <span className="text-base font-bold text-primary">{p.cny}</span>
+            </div>
+          ) : null;
+        })()}
 
         {/* 图片画廊 */}
         {images.length > 0 && (

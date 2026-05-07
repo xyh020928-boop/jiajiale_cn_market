@@ -28,6 +28,7 @@ export interface NewsRow {
   images: string[];
   published: boolean;
   created_by: string;
+  price_krw: number | null;
 }
 
 export interface NewsInsert {
@@ -41,6 +42,7 @@ export interface NewsInsert {
   images?: string[];
   published?: boolean;
   created_by: string;
+  price_krw?: number | null;
 }
 
 export interface NewsUpdate {
@@ -54,4 +56,5 @@ export interface NewsUpdate {
   images?: string[];
   published?: boolean;
   created_by?: string;
+  price_krw?: number | null;
 }
