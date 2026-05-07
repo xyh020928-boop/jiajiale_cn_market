@@ -1,28 +1,49 @@
-import { createClient } from "@/lib/supabase/server";
-import { redirect } from "next/navigation";
+"use client";
+
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
 import { togglePublish, logout } from "./actions";
 import { DeleteButton } from "@/components/admin/delete-button";
 import Link from "next/link";
 
-export default async function AdminPage() {
+export default function AdminPage() {
+  const router = useRouter();
   const supabase = createClient();
+  const [session, setSession] = useState<any>(null);
+  const [items, setItems] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // 1. 验证登录
-  const { data: sessionData } = await supabase.auth.getSession();
-  if (!sessionData.session) {
-    redirect("/admin/login");
-  }
+  useEffect(() => {
+    (async () => {
+      // 1. 检查登录
+      const { data: sessionData } = await supabase.auth.getSession();
+      if (!sessionData.session) {
+        router.push("/admin/login");
+        return;
+      }
+      setSession(sessionData.session);
 
-  // 2. 查询数据，出错不崩溃
-  let items: any[] = [];
-  try {
-    const { data } = await supabase
-      .from("news")
-      .select("*")
-      .order("created_at", { ascending: false });
-    if (data) items = data;
-  } catch {
-    // 查询失败就显示空列表
+      // 2. 获取数据
+      try {
+        const { data } = await supabase
+          .from("news")
+          .select("*")
+          .order("created_at", { ascending: false });
+        if (data) setItems(data);
+      } catch {
+        // 查询失败就显示空列表
+      }
+      setLoading(false);
+    })();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center text-sm text-gray-400">
+        加载中...
+      </div>
+    );
   }
 
   return (
@@ -31,7 +52,7 @@ export default async function AdminPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-bold">管理后台</h1>
-          <p className="text-xs text-gray-400">{sessionData.session.user.email}</p>
+          <p className="text-xs text-gray-400">{session?.user?.email}</p>
         </div>
         <div className="flex gap-2">
           <Link
