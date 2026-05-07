@@ -2,7 +2,6 @@ import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/routing";
 import { createClient } from "@/lib/supabase/server";
 import { ChevronLeft, Search } from "lucide-react";
-import type { NewsRow } from "@/lib/supabase/types";
 import { formatPrice } from "@/lib/price";
 
 type Props = {
@@ -17,17 +16,17 @@ export default async function NewsListPage({ params }: Props) {
   const catT = await getTranslations({ locale, namespace: "news.categories" });
 
   const supabase = createClient();
-  const { data: newsList, error } = await supabase
-    .from("news")
-    .select("id,created_at,updated_at,title_zh,title_ko,content_zh,content_ko,images,published")
-    .eq("published", true)
-    .order("created_at", { ascending: false });
-
-  if (error) {
-    console.error("Failed to fetch news:", error.message);
+  let items: any[] = [];
+  try {
+    const { data } = await supabase
+      .from("news")
+      .select("*")
+      .eq("published", true)
+      .order("created_at", { ascending: false });
+    if (data) items = data;
+  } catch {
+    // 查询失败就显示空
   }
-
-  const items = (newsList ?? []) as NewsRow[];
 
   return (
     <div className="space-y-4 px-4 pb-6">

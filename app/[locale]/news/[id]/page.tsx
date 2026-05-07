@@ -3,7 +3,6 @@ import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { Link } from "@/i18n/routing";
 import { ChevronLeft } from "lucide-react";
-import type { NewsRow } from "@/lib/supabase/types";
 import { formatPrice } from "@/lib/price";
 
 type Props = {
@@ -15,18 +14,25 @@ export default async function NewsDetailPage({ params }: Props) {
   const t = await getTranslations({ locale, namespace: "news" });
   const supabase = createClient();
 
-  const { data, error } = await supabase
-    .from("news")
-    .select("id,created_at,updated_at,title_zh,title_ko,content_zh,content_ko,images,published")
-    .eq("id", id)
-    .eq("published", true)
-    .single();
+  let newsItem: any;
+  try {
+    const { data, error } = await supabase
+      .from("news")
+      .select("*")
+      .eq("id", id)
+      .eq("published", true)
+      .single();
 
-  if (error || !data) {
+    if (error || !data) {
+      notFound();
+      return;
+    }
+    newsItem = data;
+  } catch {
     notFound();
+    return;
   }
 
-  const newsItem = data as NewsRow;
   const title = locale === "zh" ? newsItem.title_zh : newsItem.title_ko;
   const content = locale === "zh" ? newsItem.content_zh : newsItem.content_ko;
   const images = newsItem.images ?? [];

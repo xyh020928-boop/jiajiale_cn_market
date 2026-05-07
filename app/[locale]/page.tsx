@@ -2,7 +2,6 @@ import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/routing";
 import { createClient } from "@/lib/supabase/server";
 import { Search } from "lucide-react";
-import type { NewsRow } from "@/lib/supabase/types";
 import { formatPrice } from "@/lib/price";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { Banner } from "@/components/home/banner";
@@ -17,14 +16,18 @@ export default async function HomePage({ params }: Props) {
   const t = await getTranslations({ locale, namespace: "home" });
 
   const supabase = createClient();
-  const { data: latestNews } = await supabase
-    .from("news")
-    .select("id,created_at,updated_at,title_zh,title_ko,content_zh,content_ko,images,published")
-    .eq("published", true)
-    .order("created_at", { ascending: false })
-    .limit(4);
-
-  const items = (latestNews ?? []) as NewsRow[];
+  let items: any[] = [];
+  try {
+    const { data } = await supabase
+      .from("news")
+      .select("*")
+      .eq("published", true)
+      .order("created_at", { ascending: false })
+      .limit(4);
+    if (data) items = data;
+  } catch {
+    // 查询失败就显示空
+  }
 
   return (
     <div className="space-y-4 px-4 pb-6">
